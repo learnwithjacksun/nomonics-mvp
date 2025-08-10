@@ -15,7 +15,7 @@ const SelectWithoutIcon = ({
       <div className="relative mt-1">
         <select
           {...props}
-          className={`px-4 h-11 w-full rounded-lg text-sm border border-line focus:border-main appearance-none  ${props.className}`}
+          className={`px-4 h-11 w-full rounded-lg text-sm border border-line focus:border-primary focus:ring-[3px] focus:ring-primary/20 appearance-none  ${props.className}`}
         >
           <option value="">{defaultValue || `Select ${label}`}</option>
           {options.map((option) => (

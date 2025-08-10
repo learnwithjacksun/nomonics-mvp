@@ -17,9 +17,9 @@ export default function MainLayout({
     <>
       <Background>
         <Header />
-        <main className="main space-y-6">
+        <main className="space-y-6">
           {title && (
-            <div className="mt-6">
+            <div className="mt-6 main">
               <h1 className="text-2xl font-bold">{title}</h1>
               {subtitle && <p className="text-muted">{subtitle}</p>}
             </div>

@@ -20,6 +20,15 @@ export const navLinks = [
     { label: "Library", href: "/library" , icon: Library},
     { label: "Reel flow", href: "/reel-flow" , icon: Play},
   ];
+export const creatorNavLinks = [
+    { label: "E-Comics", href: "/" , icon: BookOpen},
+    { label: "Categories", href: "/categories" , icon: Boxes},
+    { label: "Market Place", href: "/marketplace" , icon: ShoppingCart},
+    { label: "My Comics", href: "/creator/comics" , icon: Library},
+    { label: "Reel Flow", href: "/reel-flow" , icon: Play},
+  ];
+
+
 
   export const accountTypes = [
     {
@@ -41,4 +50,47 @@ export const navLinks = [
     "drama",
     "fantasy",
     "sci-fi",
+  ];
+
+  export const comicCategories = [
+    {
+      label: "Action",
+      value: "action",
+    },
+    {
+      label: "Adventure",
+      value: "adventure",
+    },
+    {
+      label: "Comedy",
+      value: "comedy",
+    },
+    {
+      label: "Drama",
+      value: "drama",
+    },
+    {
+      label: "Fantasy",
+      value: "fantasy",
+    },
+    {
+      label: "Horror",
+      value: "horror",
+    },
+    {
+      label: "Mystery",
+      value: "mystery",
+    },
+    {
+      label: "Romance",
+      value: "romance",
+    },
+    {
+      label: "Sci-Fi",
+      value: "sci-fi",
+    },
+    {
+      label: "Thriller",
+      value: "thriller",
+    }
   ];

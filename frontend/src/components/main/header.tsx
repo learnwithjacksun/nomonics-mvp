@@ -1,5 +1,4 @@
-import { navLinks } from "@/constants/data";
-import { user } from "@/constants/dummy";
+import { creatorNavLinks, navLinks } from "@/constants/data";
 import {
   BadgeDollarSign,
   ChevronDown,
@@ -12,16 +11,39 @@ import {
 } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { ButtonWithLoader } from "../ui";
-import { useEffect, useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { MenuBar } from ".";
 import { AnimatePresence } from "framer-motion";
+import { useAuth } from "@/hooks";
 
 export default function Header() {
+  const {user} = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  
   const toggleDropDown = () => {
     setIsDropDownOpen((prev) => !prev);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropDownOpen(false);
+      }
+    };
+
+    if (isDropDownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropDownOpen]);
+
+  const menuNavLinks = user?.role === "creator" ? creatorNavLinks : navLinks;
+
   return (
     <>
       <header className="sticky top-0 z-50 backdrop-blur">
@@ -32,7 +54,7 @@ export default function Header() {
             </Link>
 
             <ul className="hidden md:flex items-center justify-center gap-4">
-              {navLinks.map((link) => (
+              {menuNavLinks.map((link) => (
                 <li key={link.href}>
                   <NavLink
                     to={link.href}
@@ -74,7 +96,7 @@ export default function Header() {
                   </p>
                   <div className="center gap-2 h-9 px-4 rounded-full bg-yellow-500/10 text-primary-2 font-semibold">
                     <Star size={18} />
-                    <span>{user?.credit}</span>
+                    <span className="text-sm md:text-md">{user?.credit}</span>
                   </div>
                 </div>
 
@@ -98,9 +120,9 @@ export default function Header() {
 
             {isDropDownOpen && (
               <UserMenu
-                isOpen={isDropDownOpen}
                 user={user}
                 toggleDropDown={toggleDropDown}
+                ref={dropdownRef}
               />
             )}
           </div>
@@ -116,29 +138,16 @@ export default function Header() {
   );
 }
 
-const UserMenu = ({
-  user,
-  toggleDropDown,
-  isOpen,
-}: {
+const UserMenu = React.forwardRef<HTMLDivElement, {
   user: User | null;
   toggleDropDown: () => void;
-  isOpen: boolean;
-}) => {
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
-    return () => {
-      document.body.style.overflow = "auto";
-    };
-  }, [isOpen]);
+}>(({ user, toggleDropDown }, ref) => {
+ 
   return (
     <>
       <div
-        className={`absolute top-full right-0 w-[220px] bg-white rounded-lg p-2 space-y-4 z-50`}
+        ref={ref}
+        className={`absolute top-full right-0 w-[220px] bg-white rounded-lg p-2 shadow-lg border border-line space-y-4 z-50`}
       >
         <div className="bg-foreground rounded-lg p-2 space-y-1">
           <p className="text-sm font-medium">{user?.name}</p>
@@ -166,6 +175,7 @@ const UserMenu = ({
             </Link>
           </li>
           {user?.role === "creator" && (
+            <>
             <li
               onClick={toggleDropDown}
               className="hover:bg-foreground rounded-lg"
@@ -178,6 +188,19 @@ const UserMenu = ({
                 <CloudUpload size={18} /> Upload Comics
               </Link>
             </li>
+            <li
+              onClick={toggleDropDown}
+              className="hover:bg-foreground rounded-lg"
+            >
+              <Link
+                to="/creator/stats"
+                className="text-sm flex items-center gap-2 p-2"
+              >
+                {" "}
+                <Wallet size={18} /> Stats/ Earnings
+              </Link>
+            </li>
+            </>
           )}
           {user?.role === "reader" && (
             <li
@@ -199,4 +222,6 @@ const UserMenu = ({
       </div>
     </>
   );
-};
+});
+
+UserMenu.displayName = 'UserMenu';

@@ -1,8 +1,17 @@
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "sonner";
 import { ScrollToTop } from "@/components/ui";
-import { Categories, Comic, Home, Library, MarketPlace, ReelFlow } from "@/pages/main";
+import {
+  Categories,
+  Comic,
+  Home,
+  Library,
+  MarketPlace,
+  ReelFlow,
+  Profile,
+} from "@/pages/main";
 import { Login, Register, Role, Verify } from "./pages/auth";
+import { Comics, Create, Stats } from "./pages/creator";
 
 export default function App() {
   return (
@@ -15,11 +24,17 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/role" element={<Role />} />
         <Route path="/verify" element={<Verify />} />
-        <Route path="/comic/:id" element={<Comic />} /> 
+        <Route path="/comic/:id" element={<Comic />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/library" element={<Library />} />
         <Route path="/reel-flow" element={<ReelFlow />} />
         <Route path="/marketplace" element={<MarketPlace />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/creator">
+          <Route path="create" element={<Create />} />
+          <Route path="stats" element={<Stats />} />
+          <Route path="comics" element={<Comics />} />
+        </Route>
       </Routes>
     </>
   );

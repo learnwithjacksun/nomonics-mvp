@@ -11,7 +11,7 @@ const InputWithoutIcon = forwardRef<HTMLInputElement, InputWithoutIconProps>(({ 
     <div className="space-y-2">
         {label && <label htmlFor={props.id} className="text-sm text-muted font-medium">{label}</label>}
         <div className="relative mt-1">
-            <input ref={ref} {...props} type={type === "password" ? (showPassword ? "text" : "password") : type} className={`h-11 w-full rounded-lg px-4 text-sm border border-line focus:border-main ${props.className}`} />
+            <input ref={ref} {...props} type={type === "password" ? (showPassword ? "text" : "password") : type} className={`h-11 w-full rounded-lg px-4 text-sm border border-line focus:border-primary focus:ring-[3px] focus:ring-primary/20 ${props.className}`} />
 
               {type === "password" && (
                 <div onClick={togglePassword} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted cursor-pointer">

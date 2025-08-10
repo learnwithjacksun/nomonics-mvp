@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 
 const Hero = () => {
   return (
-    <div className="relative min-h-[500px] md:min-h-[calc(100vh-95px)] py-10 flex items-center rounded-t-3xl rounded-b-xl overflow-hidden">
+    <div className="relative min-h-[500px] md:min-h-[calc(100vh-95px)] py-10 flex items-center overflow-hidden">
         <img src="/hero.svg" alt="hero" className="w-full h-full object-cover absolute inset-0" />
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary-2/80 to-primary-2/20" />
         <div className="relative z-20 main left-0">

@@ -17,7 +17,7 @@ export default function Comic() {
   ];
   return (
     <MainLayout>
-      <div className="space-y-10 mt-4">
+      <div className="space-y-10 mt-10 main">
         <div className="w-full md:w-[900px] mx-auto grid md:grid-cols-2 grid-cols-1 gap-4 bg-background rounded-lg p-4 border border-line">
           <div className="overflow-hidden rounded-sm">
             <img

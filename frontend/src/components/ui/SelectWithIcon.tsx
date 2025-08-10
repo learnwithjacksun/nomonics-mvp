@@ -19,7 +19,7 @@ const SelectWithIcon = ({
         </div>
         <select
           {...props}
-          className={`pl-12 h-11 w-full rounded-lg text-sm border border-line focus:border-main appearance-none  ${props.className}`}
+          className={`pl-12 h-11 w-full rounded-lg text-sm border border-line focus:border-primary focus:ring-[3px] focus:ring-primary/20 appearance-none  ${props.className}`}
         >
           <option value="">{defaultValue || `Select ${label}`}</option>
           {options.map((option) => (

@@ -13,7 +13,7 @@ const InputWithIcon = forwardRef<HTMLInputElement, InputWithIconProps>(({ icon, 
             <div className="absolute left-4 top-1/2 -translate-y-1/2 text-main/40">
                 {icon}
             </div>
-            <input ref={ref} {...props} type={type === "password" ? (showPassword ? "text" : "password") : type} className={`pl-12 h-11 w-full rounded-xl text-sm border border-line focus:border-main ${props.className}`} />
+            <input ref={ref} {...props} type={type === "password" ? (showPassword ? "text" : "password") : type} className={`pl-12 h-11 w-full rounded-xl text-sm border border-line focus:border-primary focus:ring-[3px] focus:ring-primary/20 ${props.className}`} />
 
               {type === "password" && (
                 <div onClick={togglePassword} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted cursor-pointer">

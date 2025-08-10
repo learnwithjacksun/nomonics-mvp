@@ -24,7 +24,7 @@ export default function Library() {
     }
     return (
         <MainLayout title="My Library" subtitle="Browse your comics">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 main">
                 {fltBtns.map((btn) => (
                     <button key={btn.id} onClick={() => handleFilter(btn.id)} className={`flex items-center gap-2 border-b-2 ${selectedBtn === btn.id ? "border-primary-2 text-primary-2" : "border-transparent bg-background text-muted shadow-lg"} p-4`}>
                         <btn.icon size={18} />
@@ -32,7 +32,7 @@ export default function Library() {
                     </button>
                 ))}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="main grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <ComicCard />
             </div>
         </MainLayout>

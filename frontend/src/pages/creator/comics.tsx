@@ -1,14 +1,15 @@
-import { ComicCard, Search } from "@/components/ui";
-import { MainLayout } from "@/layouts";
+import { ComicCard } from "@/components/main";
+import { Search } from "@/components/ui";
 import { genres } from "@/constants/data";
+import { MainLayout } from "@/layouts";
 import { useState } from "react";
 
-export default function Categories() {
-  const [search, setSearch] = useState("");
+export default function Comics() {
+    const [search, setSearch] = useState("");
   const [selectedGenre, setSelectedGenre] = useState<string>("all");
   return (
-    <MainLayout title="Categories" subtitle="Browse comics by title or category">
-      <div className="space-y-4 main">
+    <MainLayout title="My Comics" subtitle="View and manage all your uploaded and approved comics">
+<div className="space-y-4 main">
         <div className="md:w-[70%] w-full">
             <Search
               search={search}
@@ -22,11 +23,11 @@ export default function Categories() {
             ))}
         </ul>
       </div>
-        <div className="main grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">  
+        <div className="main grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">  
             <ComicCard />
             <ComicCard />
             <ComicCard />
         </div>
     </MainLayout>
-  );
+  )
 }

@@ -1,10 +1,10 @@
-import { navLinks } from "@/constants/data";
-import { user } from "@/constants/dummy";
+import { creatorNavLinks, navLinks } from "@/constants/data";
 import { X } from "lucide-react";
 import { useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { ButtonWithLoader } from "../ui";
 import { motion } from "framer-motion";
+import { useAuth } from "@/hooks";
 
 interface MenuBarProps {
   isOpen: boolean;
@@ -12,6 +12,7 @@ interface MenuBarProps {
 }
 
 export default function MenuBar({ isOpen, onClose }: MenuBarProps) {
+  const {user} = useAuth();
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -22,6 +23,8 @@ export default function MenuBar({ isOpen, onClose }: MenuBarProps) {
       document.body.style.overflow = "auto";
     };
   }, [isOpen]);
+
+  const menuNavLinks = user?.role === "creator" ? creatorNavLinks : navLinks;
 
   return (
     <div className="fixed inset-0 z-60">
@@ -46,7 +49,7 @@ export default function MenuBar({ isOpen, onClose }: MenuBarProps) {
         </div>
 
         <ul className="space-y-4 pl-4">
-          {navLinks.map((link) => (
+          {menuNavLinks.map((link) => (
             <li key={link.label}>
               <NavLink
                 to={link.href}
