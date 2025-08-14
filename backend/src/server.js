@@ -18,7 +18,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://nomonics.vercel.app/",
+  "https://nomonics.vercel.app",
 ];
 
 app.use(
