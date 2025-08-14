@@ -16,13 +16,16 @@ connectDB();
 
 const app = express();
 
-const allowedOrigins = ["http://localhost:3000"];
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://nomonics.vercel.app/",
+];
 
 app.use(
   cors({
     origin: allowedOrigins,
     credentials: true,
-    allowedOrigins: allowedOrigins
+    allowedOrigins: allowedOrigins,
   })
 );
 app.use(express.json({ limit: "50mb" })); // ✅ Increase limit
@@ -43,10 +46,7 @@ app.use("/v1/comic", comicRouter);
 app.use("/v1/admin", adminRouter);
 app.use("/v1/user", userRouter);
 app.use("/v1/transaction", transactionRouter);
-app.use("/v1/marketplace", marketplaceRouter)
-
-
-
+app.use("/v1/marketplace", marketplaceRouter);
 
 app.listen(Port, () => {
   console.log(`Server is running on port http://localhost:${Port}`);
