@@ -18,7 +18,7 @@ export default function Role() {
     if (selectedType) {
       setLoading(true);
       setTimeout(() => {
-        navigate("/register", { state: { type: selectedType } });
+        navigate(`/register?role=${selectedType.toLowerCase()}`);
       }, 1000);
     }
   };

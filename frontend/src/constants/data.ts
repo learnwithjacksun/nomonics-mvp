@@ -1,4 +1,4 @@
-import { BookOpen, Boxes, Library, Play, ShoppingCart } from "lucide-react";
+import { Book, BookOpen, Boxes, CircleDollarSign, CreditCard, Home, Library, Play, ShoppingCart, Users } from "lucide-react";
 
 export const libraries = [
     "React Router",
@@ -26,6 +26,15 @@ export const creatorNavLinks = [
     { label: "Market Place", href: "/marketplace" , icon: ShoppingCart},
     { label: "My Comics", href: "/creator/comics" , icon: Library},
     { label: "Reel Flow", href: "/reel-flow" , icon: Play},
+  ];
+
+  export const adminNavLinks = [
+    { label: "Overview", href: "/admin/overview" , icon: Home},
+    { label: "Revenue", href: "/admin/revenue" , icon: CircleDollarSign},
+    { label: "Users", href: "/admin/users" , icon: Users},
+    { label: "Comics", href: "/admin/comics" , icon: Book},
+    { label: "Transactions", href: "/admin/transactions" , icon: CreditCard},
+    { label: "Market Place", href: "/admin/marketplace" , icon: ShoppingCart},
   ];
 
 

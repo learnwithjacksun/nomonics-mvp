@@ -10,12 +10,35 @@ import { comicCategories } from "@/constants/data";
 import { MainLayout } from "@/layouts";
 import { CloudUpload, Sparkle, Star } from "lucide-react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createComicSchema, type CreateComicSchema } from "@/schemas/create-comic";
+import { toast } from "sonner";
+import { useComics } from "@/hooks";
 
 export default function Create() {
+  const { createNewComic, isLoading } = useComics();
   const [pdf, setPdf] = useState<File | null>(null);
   const [image, setImage] = useState<File | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
-  const [description, setDescription] = useState<string>("");
+
+  const { register, handleSubmit, formState: { errors } } = useForm<CreateComicSchema>({
+    resolver: zodResolver(createComicSchema),
+  });
+
+  const onSubmit = (data: CreateComicSchema) => {
+    if(!pdf){
+      toast.error("Comic file is required");
+      return;
+    }
+    if(categories.length === 0){
+      toast.error("At least one genre is required");
+      return;
+    }
+    
+    createNewComic(data, pdf, image, categories);
+  };
+
   return (
     <>
       <MainLayout>
@@ -29,7 +52,7 @@ export default function Create() {
             </p>
           </div>
 
-          <form>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="border border-line bg-background px-6 pt-4 pb-6 shadow-xl mt-4 rounded-lg">
               <p className="text-lg text-primary-2 font-semibold flex items-center gap-2">
                 <Sparkle size={20} className="text-primary-2" /> Comic Format/
@@ -45,6 +68,8 @@ export default function Create() {
                       value: "image",
                     },
                   ]}
+                  {...register("format")}
+                  error={errors.format?.message}
                 />
                 <SelectWithoutIcon
                   label="Comic Type"
@@ -52,6 +77,8 @@ export default function Create() {
                     { label: "Free", value: "free" },
                     { label: "Paid", value: "paid" },
                   ]}
+                  {...register("type")}
+                  error={errors.type?.message}
                 />
               </div>
             </div>
@@ -78,6 +105,8 @@ export default function Create() {
                   label="Comic Title"
                   type="text"
                   placeholder="e.g. The Amazing Spider-Man"
+                  {...register("title")}
+                  error={errors.title?.message}
                 />
                 <MultiSelect
                   label="Genres"
@@ -93,14 +122,15 @@ export default function Create() {
                     Synopsis
                   </label>
                   <textarea
-                    name="description"
                     id="description"
                     rows={5}
                     placeholder="e.g. A young boy discovers he has spider-like abilities and becomes the superhero Spider-Man."
                     className="p-4 w-full rounded-lg text-sm border border-line focus:border-primary focus:ring-[3px] focus:ring-primary/20 dark:bg-secondary mt-1"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    {...register("synopsis")}
                   ></textarea>
+                  {errors.synopsis && (
+                    <p className="text-red-500 text-sm">{errors.synopsis.message}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -109,6 +139,7 @@ export default function Create() {
               type="submit"
               initialText="Upload Comic"
               loadingText="Uploading..."
+              loading={isLoading}
               className="w-full mt-4 btn-primary h-11 rounded-lg"
             />
           </form>

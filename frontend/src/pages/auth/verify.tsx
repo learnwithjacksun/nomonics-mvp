@@ -2,8 +2,10 @@ import { ButtonWithLoader } from "@/components/ui";
 import { AuthLayout } from "@/layouts";
 import { useSearchParams } from "react-router-dom";
 import { useState, useRef } from "react";
+import { useAuth } from "@/hooks";
 
 export default function Verify() {
+  const { verifyOtp, isLoading } = useAuth();
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email");
   const [otp, setOtp] = useState<string[]>(new Array(5).fill(""));
@@ -50,8 +52,7 @@ export default function Verify() {
     e.preventDefault();
     const otpString = otp.join("");
     if (otpString.length === 5) {
-      console.log("OTP submitted:", otpString);
-      // Handle OTP verification here
+      verifyOtp(otpString);
     }
   };
 
@@ -92,6 +93,7 @@ export default function Verify() {
           type="submit"
           className="w-full btn-primary h-11 rounded-lg"
           disabled={otp.join("").length !== 5}
+          loading={isLoading}
         />
       </form>
       <div className="text-center mt-4">

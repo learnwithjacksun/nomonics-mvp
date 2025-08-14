@@ -1,3 +1,4 @@
+import { Loader } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
@@ -29,6 +30,11 @@ export default function PDFViewer({ fileUrl }: PreviewProps) {
   return (
     <div className="w-full h-full mx-auto">
       <Document
+      loading={
+        <div className="center gap-4 h-30 rounded-lg bg-background">
+          <Loader size={20} className="animate-spin text-primary" /> Loading Comic...
+        </div>
+      }
         file={fileUrl}
         onLoadSuccess={onDocumentLoadSuccess}
         onLoadError={(error) => console.error("Error loading PDF:", error)}

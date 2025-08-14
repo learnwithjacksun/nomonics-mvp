@@ -1,37 +1,56 @@
 import { ButtonWithLoader, InputWithoutIcon } from "@/components/ui";
 import { AuthLayout } from "@/layouts";
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { type RegisterSchema, registerSchema } from "@/schemas/auth";
+import { useAuth } from "@/hooks";
 
 
 export default function Register() {
-  const { type } = useLocation().state as { type: string };
+  const { registerUser, isLoading } = useAuth();
+  const [searchParams] = useSearchParams();
+  const role = searchParams.get("role") || "";
   const [agreeToMarketing, setAgreeToMarketing] = useState(false);
   const [agreeToAge, setAgreeToAge] = useState(false);
+  const { register, handleSubmit, formState: { errors } } = useForm<RegisterSchema>({
+    resolver: zodResolver(registerSchema),
+  });
+  const onSubmit = (data: RegisterSchema) => {
+    
+    registerUser(data, agreeToMarketing, role.toLowerCase());
+  };
   return (
     <AuthLayout
       title="Create Account"
       subtitle={`You are registering as a ${
-        type.charAt(0).toUpperCase() + type.slice(1)
+        role.charAt(0).toUpperCase() + role.slice(1)
       }`}
     >
-      <form className="space-y-4 h-full overflow-y-scroll hide-scrollbar">
+      <form className="space-y-4 h-full overflow-y-scroll hide-scrollbar" onSubmit={handleSubmit(onSubmit)}>
         <div className="grid md:grid-cols-2 gap-4">
           <InputWithoutIcon
             type="text"
             label="Full Name"
             placeholder="e.g John Doe"
+            {...register("name")}
+            error={errors.name?.message}
           />
           <InputWithoutIcon
             type="email"
             label="Email Address"
             placeholder="e.g john@gmail.com"
+            {...register("email")}
+            error={errors.email?.message}
           />
        
           <InputWithoutIcon
             type="password"
             label="Password"
             placeholder="********"
+            {...register("password")}
+            error={errors.password?.message}
           />
           
         
@@ -39,6 +58,8 @@ export default function Register() {
           type="password"
           label="Confirm Password"
           placeholder="********"
+          {...register("confirmPassword")}
+          error={errors.confirmPassword?.message}
         />
         </div>
       
@@ -78,6 +99,8 @@ export default function Register() {
           className="w-full btn-primary h-11 rounded-lg"
           initialText="Create Account"
           loadingText="Creating account..."
+          loading={isLoading}
+          disabled={isLoading}
         />
 
         <div className="text-center">

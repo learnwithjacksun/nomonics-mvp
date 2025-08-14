@@ -1,15 +1,15 @@
 import { formatNumber } from "@/helpers/formatNumber";
 import { ChevronRight} from "lucide-react";
 
-export default function ProductCard() {
+export default function ProductCard({product}: {product: IProduct}) {
 
   return (
-    <div className="relative bg-white  rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div className="relative bg-white  rounded-lg shadow-lg border border-gray-200 overflow-hidden">
       <div className="grid md:grid-cols-3 grid-cols-2 gap-4 p-4">
         {/* Left Side - Book Cover Image */}
-        <div className="col-span-1 relative overflow-hidden rounded-md">
+        <div className="col-span-1 relative overflow-hidden rounded">
           <img
-            src="/poster.jpg"
+            src={product.image}
             alt="The Amazing Spider-Man"
             className="w-full h-full object-cover"
             style={{ aspectRatio: "1/1.414" }} // A4 proportions (1:√2)
@@ -21,31 +21,29 @@ export default function ProductCard() {
           {/* Title and Author */}
           <div>
             <p className="bg-primary/10 w-fit font-semibold text-primary-2 px-2 py-1 rounded-full text-sm">
-              Drama
+              {product.category}
             </p>
             <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-2">
-              Tom and Jerry
+              {product.name}
             </h3>
             <p className="text-sm text-muted line-clamp-3 text-ellipsis">
-              Lorem ipsum dolor sit amet conse adipisicing elit.
-              Perferendis dignissimos atque quis odit exercit porro
-              architecto modi qui, soluta amet!
+              {product.description}
             </p>
           </div>
 
 
           <p className="text-primary-2 font-bold text-lg mt-auto">
-            &#8358; {formatNumber(2500)}
+            &#8358; {formatNumber(product.price)}
           </p>
         </div>
       </div>
 
-      <a href="#" target="_blank" className="bg-primary/10 p-4 flex items-center justify-between">
+      <a href={product.contact} target="_blank" className="bg-primary/10 p-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
             <div className="h-10 w-10 center rounded-full overflow-hidden">
-                <img src="https://ui-avatars.com/api/?name=Elon+Musk&background=4b2e00&color=fff" alt="" />
+                <img src={product.createdBy.image} alt="" />
             </div>
-            <p className="text-sm text-primary-2 font-semibold">Gift Jackson</p>
+            <p className="text-sm text-primary-2 font-semibold">{product.createdBy.name}</p>
         </div>
         <button>
              <ChevronRight size={30}/>

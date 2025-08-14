@@ -1,5 +1,5 @@
 import { Box } from "@/components/ui";
-import { useAuth } from "@/hooks";
+import { useAuth, useComics } from "@/hooks";
 import { MainLayout } from "@/layouts";
 import { ArrowRightLeft, BookCheck, BookOpen, BookX, ShoppingBag, Star, Wallet } from "lucide-react";
 import CountUp from "react-countup";
@@ -7,27 +7,28 @@ import { Link } from "react-router-dom";
 
 export default function Stats() {
   const {user} = useAuth();
+  const {creatorComics} = useComics();
 
   const stats = [
     {
       icon: BookOpen,
       title: "Total Comics",
-      value: 4,
+      value: creatorComics?.length || 0,
     },
     {
       icon: BookCheck,
       title: "Active Comics",
-      value: 2,
+      value: creatorComics?.filter((comic) => comic.status === "approved").length || 0,
     },
     {
       icon: BookX,
       title: "Pending Comics",
-      value: 1,
+      value: creatorComics?.filter((comic) => comic.status === "pending").length || 0,
     },
     {
       icon: ShoppingBag,
       title: "Total Products",
-      value: 1,
+      value: 0,
     },
   ]
   return (
@@ -44,25 +45,25 @@ export default function Stats() {
 
           <Box>
             <div className="flex items-center justify-between flex-col md:flex-row gap-4">
-              <div className="border border-line p-4 space-y-4 rounded-lg w-full">
+              <div className="border border-primary-2/10 bg-primary-2/2 p-4 space-y-2 md:space-y-4 rounded-lg w-full">
                 <div className="flex items-center gap-2">
                   <Wallet size={20}/>
                   <span className="text-muted">Total Earnings</span>
                 </div>
                 <p className="text-primary-2 font-bold text-3xl md:text-4xl">
-                  <CountUp end={1000} prefix="₦" />
+                  <CountUp end={user?.earnings || 0} prefix="₦" decimals={2} separator="," />
                 </p>
               </div>
               <div className="h-10 min-w-10 bg-primary/10 center rounded-full">
                 <ArrowRightLeft/>
               </div>
-              <div className="border border-line p-4 space-y-4 rounded-lg w-full">
+              <div className="border border-primary-2/10 bg-primary-2/2 p-4 space-y-2 md:space-y-4 rounded-lg w-full">
                 <div className="flex items-center gap-2">
                   <Star size={20}/>
-                </div>
                   <span className="text-muted">Total Credits</span>
+                </div>
                 <p className="text-primary-2 font-bold text-3xl md:text-4xl">
-                  <CountUp end={user?.credit} />
+                  <CountUp end={user?.credits || 0} />
                 </p>
               </div>
             </div>
@@ -78,9 +79,9 @@ export default function Stats() {
           </div>
 
           <Box title="Stats">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {stats.map((stat) => (
-                <div key={stat.title} className="border border-line bg-secondary p-4 space-y-4 rounded-lg">
+                <div key={stat.title} className="border border-primary-2/10 bg-primary-2/2 p-4 space-y-4 rounded-lg">
                   <div className="space-y-2">
                     <div className="center h-10 w-10 bg-primary/10 rounded-md">
                       <stat.icon size={20}/>

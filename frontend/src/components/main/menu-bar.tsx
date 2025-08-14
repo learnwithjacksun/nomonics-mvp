@@ -1,4 +1,4 @@
-import { creatorNavLinks, navLinks } from "@/constants/data";
+import { adminNavLinks, creatorNavLinks, navLinks } from "@/constants/data";
 import { X } from "lucide-react";
 import { useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
@@ -12,7 +12,7 @@ interface MenuBarProps {
 }
 
 export default function MenuBar({ isOpen, onClose }: MenuBarProps) {
-  const {user} = useAuth();
+  const {user, logout} = useAuth();
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -25,6 +25,7 @@ export default function MenuBar({ isOpen, onClose }: MenuBarProps) {
   }, [isOpen]);
 
   const menuNavLinks = user?.role === "creator" ? creatorNavLinks : navLinks;
+  const isAdminNavLinks = user?.isAdmin ? adminNavLinks : menuNavLinks;
 
   return (
     <div className="fixed inset-0 z-60">
@@ -49,7 +50,7 @@ export default function MenuBar({ isOpen, onClose }: MenuBarProps) {
         </div>
 
         <ul className="space-y-4 pl-4">
-          {menuNavLinks.map((link) => (
+          {isAdminNavLinks.map((link) => (
             <li key={link.label}>
               <NavLink
                 to={link.href}
@@ -69,12 +70,12 @@ export default function MenuBar({ isOpen, onClose }: MenuBarProps) {
         {!user && (
           <div className="flex flex-col gap-4 px-4 mt-auto mb-4">
             <Link
-              to="/"
+              to="/role"
               className="btn bg-primary/20 text-primary py-2 rounded-lg"
             >
               Register
             </Link>
-            <Link to="/" className="btn text-white py-2 rounded-lg">
+            <Link to="/login" className="btn text-white py-2 rounded-lg">
               Login
             </Link>
           </div>
@@ -85,6 +86,7 @@ export default function MenuBar({ isOpen, onClose }: MenuBarProps) {
             initialText="Logout"
             loadingText="Logging out..."
             className="w-[90%] mx-auto mt-auto mb-4 bg-red-500 h-10 rounded-lg text-white"
+            onClick={() => logout()}
           />
         )}
       </motion.div>

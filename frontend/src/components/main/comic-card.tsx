@@ -1,22 +1,22 @@
 import { useNavigate } from "react-router-dom";
 
-export default function ComicCard() {
+export default function ComicCard({comic}: {comic: IComic}) {
   const navigate = useNavigate();
 
-  const handleNavigate = () => {
-    navigate(`/comic/1`);
+  const handleNavigate = (id: string) => {
+    navigate(`/comic/${id}`);
   };
 
   return (
     <div
       className="relative rounded-sm overflow-hidden cursor-pointer"
       style={{ aspectRatio: "1/1.414" }}
-      onClick={handleNavigate}
+      onClick={() => handleNavigate(comic.id)}
     >
       {/* Background Image */}
       <img
-        src="/poster.jpg"
-        alt="The Amazing Spider-Man"
+        src={comic.coverImage.url}
+        alt={comic.title}
         className="absolute inset-0 w-full h-full object-cover"
       />
 
@@ -25,8 +25,8 @@ export default function ComicCard() {
 
       {/* Text Content */}
       <div className="absolute bottom-0 left-0 p-4 text-white">
-        <h3 className="text-lg font-bold">The Amazing Spider-Man</h3>
-        <p className="text-sm opacity-80">by Stan Lee</p>
+        <h3 className="text-lg font-bold">{comic?.title || "Unknown"}</h3>
+        <p className="text-sm opacity-80">by {typeof comic.creator === "string" ? "Unknown" : comic.creator.name}</p>
       </div>
     </div>
   );

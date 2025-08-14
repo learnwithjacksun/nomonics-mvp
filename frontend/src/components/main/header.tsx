@@ -1,26 +1,22 @@
-import { creatorNavLinks, navLinks } from "@/constants/data";
+import { adminNavLinks, creatorNavLinks, navLinks } from "@/constants/data";
 import {
-  BadgeDollarSign,
-  ChevronDown,
-  CloudUpload,
   Menu,
-  Sparkle,
   Star,
-  UserRound,
-  Wallet,
 } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
-import { ButtonWithLoader } from "../ui";
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { MenuBar } from ".";
 import { AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks";
+import { ChevronDown } from "lucide-react";
+import { ReaderDropdown, CreatorDropdown, AdminDropdown } from "../ui";
 
 export default function Header() {
   const {user} = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropDownOpen, setIsDropDownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const avatarRef = useRef<HTMLDivElement>(null);
   
   const toggleDropDown = () => {
     setIsDropDownOpen((prev) => !prev);
@@ -28,7 +24,11 @@ export default function Header() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      const isClickInAvatar = avatarRef.current?.contains(target);
+      const isClickInDropdown = dropdownRef.current?.contains(target);
+      
+      if (!isClickInAvatar && !isClickInDropdown) {
         setIsDropDownOpen(false);
       }
     };
@@ -44,6 +44,45 @@ export default function Header() {
 
   const menuNavLinks = user?.role === "creator" ? creatorNavLinks : navLinks;
 
+  const isAdminNavLinks = user?.isAdmin ? adminNavLinks : menuNavLinks;
+
+  // Function to render the appropriate dropdown based on user role
+  const renderDropdown = () => {
+    if (!user) return null;
+
+    if (user.isAdmin) {
+      return (
+        <AdminDropdown 
+          user={user} 
+          toggleDropDown={toggleDropDown}
+          ref={dropdownRef}
+        />
+      );
+    }
+
+    if (user.role === "creator") {
+      return (
+        <CreatorDropdown 
+          user={user} 
+          toggleDropDown={toggleDropDown}
+          ref={dropdownRef}
+        />
+      );
+    }
+
+    if (user.role === "reader") {
+      return (
+        <ReaderDropdown 
+          user={user} 
+          toggleDropDown={toggleDropDown}
+          ref={dropdownRef}
+        />
+      );
+    }
+
+    return null;
+  };
+
   return (
     <>
       <header className="sticky top-0 z-50 backdrop-blur">
@@ -54,7 +93,7 @@ export default function Header() {
             </Link>
 
             <ul className="hidden md:flex items-center justify-center gap-4">
-              {menuNavLinks.map((link) => (
+              {isAdminNavLinks.map((link) => (
                 <li key={link.href}>
                   <NavLink
                     to={link.href}
@@ -96,17 +135,18 @@ export default function Header() {
                   </p>
                   <div className="center gap-2 h-9 px-4 rounded-full bg-yellow-500/10 text-primary-2 font-semibold">
                     <Star size={18} />
-                    <span className="text-sm md:text-md">{user?.credit}</span>
+                    <span className="text-sm md:text-md">{user?.credits}</span>
                   </div>
                 </div>
 
                 <div
                   onClick={toggleDropDown}
                   className="flex items-center gap-1 cursor-pointer"
+                  ref={avatarRef}
                 >
-                  <div className="md:h-11 md:w-11 h-9 w-9 center rounded-full overflow-hidden">
+                  <div className="md:h-11 md:w-11 h-9 w-9 center bg-blue-300 rounded-full overflow-hidden">
                     <img
-                      src="https://ui-avatars.com/api/?name=John+Doe&background=4b2e00&color=fff"
+                      src={user?.image || "https://api.dicebear.com/9.x/adventurer/svg?seed=Felix"}
                       alt=""
                     />
                   </div>
@@ -118,13 +158,7 @@ export default function Header() {
               <Menu size={24} onClick={() => setIsMenuOpen(true)} />
             </div>
 
-            {isDropDownOpen && (
-              <UserMenu
-                user={user}
-                toggleDropDown={toggleDropDown}
-                ref={dropdownRef}
-              />
-            )}
+            {isDropDownOpen && renderDropdown()}
           </div>
         </nav>
       </header>
@@ -138,90 +172,7 @@ export default function Header() {
   );
 }
 
-const UserMenu = React.forwardRef<HTMLDivElement, {
-  user: User | null;
-  toggleDropDown: () => void;
-}>(({ user, toggleDropDown }, ref) => {
- 
-  return (
-    <>
-      <div
-        ref={ref}
-        className={`absolute top-full right-0 w-[220px] bg-white rounded-lg p-2 shadow-lg border border-line space-y-4 z-50`}
-      >
-        <div className="bg-foreground rounded-lg p-2 space-y-1">
-          <p className="text-sm font-medium">{user?.name}</p>
-          <p className="text-xs text-muted flex items-center gap-1 capitalize">
-            <Sparkle size={16} className="text-primary" /> {user?.role}
-          </p>
-        </div>
-        <ul className="">
-          <li
-            onClick={toggleDropDown}
-            className="hover:bg-foreground rounded-lg"
-          >
-            <Link to="/profile" className="text-sm flex items-center gap-2 p-2">
-              {" "}
-              <UserRound size={18} /> Profile
-            </Link>
-          </li>
-          <li
-            onClick={toggleDropDown}
-            className="hover:bg-foreground rounded-lg"
-          >
-            <Link to="/profile" className="text-sm flex items-center gap-2 p-2">
-              {" "}
-              <BadgeDollarSign size={18} /> Sell Comics
-            </Link>
-          </li>
-          {user?.role === "creator" && (
-            <>
-            <li
-              onClick={toggleDropDown}
-              className="hover:bg-foreground rounded-lg"
-            >
-              <Link
-                to="/creator/create"
-                className="text-sm flex items-center gap-2 p-2"
-              >
-                {" "}
-                <CloudUpload size={18} /> Upload Comics
-              </Link>
-            </li>
-            <li
-              onClick={toggleDropDown}
-              className="hover:bg-foreground rounded-lg"
-            >
-              <Link
-                to="/creator/stats"
-                className="text-sm flex items-center gap-2 p-2"
-              >
-                {" "}
-                <Wallet size={18} /> Stats/ Earnings
-              </Link>
-            </li>
-            </>
-          )}
-          {user?.role === "reader" && (
-            <li
-              onClick={toggleDropDown}
-              className="hover:bg-foreground rounded-lg"
-            >
-              <Link to="/token" className="text-sm flex items-center gap-2 p-2">
-                {" "}
-                <Wallet size={18} /> Purchase Credits
-              </Link>
-            </li>
-          )}
-        </ul>
-        <ButtonWithLoader
-          initialText="Logout"
-          loadingText="Logging out..."
-          className="w-full bg-red-500 h-10 rounded-lg text-white"
-        />
-      </div>
-    </>
-  );
-});
 
-UserMenu.displayName = 'UserMenu';
+
+
+
