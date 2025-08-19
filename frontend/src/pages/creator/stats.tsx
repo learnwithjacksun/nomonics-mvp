@@ -70,10 +70,10 @@ export default function Stats() {
           </Box>
 
           <div className="center gap-4">
-            <Link to="/" className="btn btn-primary h-10 px-4 w-full md:w-[200px] rounded-lg">
+            <Link to="/creator/revenue" className="btn btn-primary h-10 px-4 w-full md:w-[200px] rounded-lg">
             Withdraw
             </Link>
-            <Link to="/" className="btn border border-line bg-primary-2 text-white w-full md:w-[200px] h-10 px-4 rounded-lg">
+            <Link to="/purchase-credit" className="btn border border-line bg-primary-2 text-white w-full md:w-[200px] h-10 px-4 rounded-lg">
             Purchase Credit
             </Link>
           </div>

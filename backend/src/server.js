@@ -9,6 +9,9 @@ import adminRouter from "./routes/admin.route.js";
 import userRouter from "./routes/user.route.js";
 import transactionRouter from "./routes/transaction.route.js";
 import marketplaceRouter from "./routes/marketplace.route.js";
+import bankAccountRouter from "./routes/bank-account.route.js";
+import withdrawalRouter from "./routes/withdrawal.route.js";
+import commentRouter from "./routes/comment.route.js";
 
 const Port = envFile.PORT || 5000;
 
@@ -47,6 +50,9 @@ app.use("/v1/admin", adminRouter);
 app.use("/v1/user", userRouter);
 app.use("/v1/transaction", transactionRouter);
 app.use("/v1/marketplace", marketplaceRouter);
+app.use("/v1/bank", bankAccountRouter);
+app.use("/v1/withdrawal", withdrawalRouter);
+app.use("/v1/comment", commentRouter);
 
 app.listen(Port, () => {
   console.log(`Server is running on port http://localhost:${Port}`);

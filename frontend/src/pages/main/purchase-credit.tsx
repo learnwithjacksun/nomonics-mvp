@@ -1,6 +1,6 @@
 import { Box, ButtonWithLoader, InputWithoutIcon } from "@/components/ui";
 import { formatNumber } from "@/helpers/formatNumber";
-import { useAuth, usePayment } from "@/hooks";
+import { useAuth, usePayment, useSettings } from "@/hooks";
 import { MainLayout, MiniLayout } from "@/layouts";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -8,17 +8,19 @@ import { toast } from "sonner";
 
 export default function PurchaseCredit() {
   const { user } = useAuth();
+  const { settings } = useSettings();
   
   const { initializePayment, loading} = usePayment();
   const [credit, setCredit] = useState("");
   const [equivalentPrice, setEquivalentPrice] = useState(0);
   useEffect(() => {
-    if (credit) {
-      setEquivalentPrice(Number(credit) * 10);
+    if (credit && settings?.creditsPerHundredNaira) {
+      // Calculate price: (credits / creditsPerHundredNaira) * 100
+      setEquivalentPrice((Number(credit) / settings.creditsPerHundredNaira) * 100);
     } else {
       setEquivalentPrice(0);
     }
-  }, [credit]);
+  }, [credit, settings?.creditsPerHundredNaira]);
 
   const handlePurchase = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

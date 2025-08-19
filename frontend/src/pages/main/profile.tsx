@@ -4,12 +4,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { profileSchema, type ProfileSchema } from "@/schemas/profile";
 import { useEffect, useState } from "react";
-import { useAuth } from "@/hooks";
+import { useAuth, useProfile } from "@/hooks";
 
 export default function Profile() {
   const { user } = useAuth();
+  const { updateProfile, isLoading } = useProfile();
   const [image, setImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -17,6 +19,7 @@ export default function Profile() {
       setPreviewImage(URL.createObjectURL(file));
     }
   };
+  
   const {
     register,
     handleSubmit,
@@ -26,8 +29,12 @@ export default function Profile() {
     resolver: zodResolver(profileSchema),
   });
 
-  const onSubmit = (data: ProfileSchema) => {
-    console.log(data, image);
+  const onSubmit = async (data: ProfileSchema) => {
+    const success = await updateProfile(data, image || undefined);
+    if (success) {
+      setImage(null);
+      setPreviewImage(null);
+    }
   };
   useEffect(()=>{
 if(user){
@@ -140,6 +147,7 @@ if(user){
           </Box>
           <ButtonWithLoader
             type="submit"
+            loading={isLoading}
             initialText="Save Changes"
             loadingText="Saving..."
             className="w-full mt-4 btn-primary h-11 rounded-lg"

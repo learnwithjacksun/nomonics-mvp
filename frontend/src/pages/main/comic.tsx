@@ -1,4 +1,3 @@
-import { ComicSettings } from "@/components/admin";
 import { Episodes } from "@/components/main";
 import { ButtonWithLoader } from "@/components/ui";
 import { useAdmin, useAuth, useComics } from "@/hooks";
@@ -215,7 +214,7 @@ export default function Comic() {
           </div>
         </div>
 
-        {isAdmin && comic?.id && <ComicSettings comicId={comic?.id} />}
+       
 
         <Episodes
           chapters={comic?.chapters}

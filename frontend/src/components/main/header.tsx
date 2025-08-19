@@ -1,4 +1,4 @@
-import { adminNavLinks, creatorNavLinks, navLinks } from "@/constants/data";
+import {  creatorNavLinks, navLinks } from "@/constants/data";
 import {
   Menu,
   Star,
@@ -9,7 +9,7 @@ import { MenuBar } from ".";
 import { AnimatePresence } from "framer-motion";
 import { useAuth } from "@/hooks";
 import { ChevronDown } from "lucide-react";
-import { ReaderDropdown, CreatorDropdown, AdminDropdown } from "../ui";
+import { ReaderDropdown, CreatorDropdown } from "../ui";
 
 export default function Header() {
   const {user} = useAuth();
@@ -44,21 +44,12 @@ export default function Header() {
 
   const menuNavLinks = user?.role === "creator" ? creatorNavLinks : navLinks;
 
-  const isAdminNavLinks = user?.isAdmin ? adminNavLinks : menuNavLinks;
 
   // Function to render the appropriate dropdown based on user role
   const renderDropdown = () => {
     if (!user) return null;
 
-    if (user.isAdmin) {
-      return (
-        <AdminDropdown 
-          user={user} 
-          toggleDropDown={toggleDropDown}
-          ref={dropdownRef}
-        />
-      );
-    }
+  
 
     if (user.role === "creator") {
       return (
@@ -93,7 +84,7 @@ export default function Header() {
             </Link>
 
             <ul className="hidden md:flex items-center justify-center gap-4">
-              {isAdminNavLinks.map((link) => (
+              {menuNavLinks.map((link) => (
                 <li key={link.href}>
                   <NavLink
                     to={link.href}

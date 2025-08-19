@@ -4,3 +4,8 @@ export {default as useComics} from "./useComics";
 export {default as useAdmin} from "./useAdmin";
 export {default as usePayment} from "./usePayment";
 export {default as useProducts} from "./useProducts";
+export {default as useSettings} from "./useSettings";
+export {default as useBankAccount} from "./useBankAccount";
+export {default as useWithdrawal} from "./useWithdrawal";
+export {default as useComments} from "./useComments";
+export {default as useProfile} from "./useProfile";

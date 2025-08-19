@@ -2,12 +2,13 @@ import ComicModel from "../models/comic.model.js";
 import SavedComicModel from "../models/saved-comic.model.js";
 import UserModel from "../models/user.model.js";
 import { onError } from "../utils/onError.js";
+import { uploadImage } from "../libs/cloudinary.js";
 
 export const getUsers = async (req, res) => {
   try {
     const users = await UserModel.find({
       role: { $in: ["reader", "creator"] },
-    });
+    }).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       message: "Users fetched successfully",
@@ -128,6 +129,83 @@ export const getSavedComics = async (req, res) => {
       success: true,
       message: "Saved comics fetched successfully",
       data: validSavedComicsData
+    });
+  } catch (error) {
+    onError(res, error);
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  try {
+    const { id: userId } = req.user;
+    const { name, email, phone, address, city, state, dob, gender, image } = req.body;
+
+    const updateData = {
+      name,
+      email,
+      phone,
+      address,
+      city,
+      state,
+      dob,
+      gender,
+      image,
+    };
+
+    // Handle image upload if provided
+    if (image) {
+      const imageData = await uploadImage(image);
+      updateData.image = imageData.url;
+    }
+
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      updateData,
+      { new: true }
+    ).select("-password");
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      data: updatedUser,
+    });
+  } catch (error) {
+    onError(res, error);
+  }
+};
+
+export const toggleAdminStatus = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { id: currentUserId } = req.user;
+
+    // Prevent admin from removing their own admin status
+    if (userId === currentUserId) {
+      return res.status(400).json({
+        success: false,
+        message: "You cannot modify your own admin status",
+      });
+    }
+
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Toggle admin status
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      { isAdmin: !user.isAdmin },
+      { new: true }
+    ).select("-password");
+
+    res.status(200).json({
+      success: true,
+      message: `User ${updatedUser.isAdmin ? 'promoted to' : 'removed from'} admin successfully`,
+      data: updatedUser,
     });
   } catch (error) {
     onError(res, error);

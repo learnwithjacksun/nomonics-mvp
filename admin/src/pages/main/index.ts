@@ -1,0 +1,13 @@
+export {default as Overview} from "./overview";
+export {default as Users} from "./users";
+export {default as UserDetails} from "./user-details";
+export {default as Comics} from "./comics";
+export {default as ComicDetails} from "./comic-details";
+export {default as Preview} from "./preview";
+export {default as Transactions} from "./transactions";
+export {default as TransactionDetails} from "./transaction-details";
+export {default as MarketPlace} from "./market-place";
+export {default as AddProduct} from "./add-product";
+export {default as AddComic} from "./add-comic";
+export {default as Revenue} from "./revenue";
+export {default as Settings} from "./settings";

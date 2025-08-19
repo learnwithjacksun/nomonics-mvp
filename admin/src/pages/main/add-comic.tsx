@@ -1,0 +1,138 @@
+import { MainLayout, MiniLayout } from "@/layouts";
+import {
+    ButtonWithLoader,
+    ImageUploader,
+    InputWithoutIcon,
+    MultiSelect,
+    PdfUploader,
+    SelectWithoutIcon,
+  } from "@/components/ui";
+  import { comicCategories } from "@/constants/data";
+  import { CloudUpload, Sparkle, Star } from "lucide-react";
+  import { useState } from "react";
+  import { useForm } from "react-hook-form";
+  import { zodResolver } from "@hookform/resolvers/zod";
+  import { createComicSchema, type CreateComicSchema } from "@/schemas/create-comic";
+  import { toast } from "sonner";
+  import { useComics } from "@/hooks";
+
+export default function AddComic() {
+    const { createNewComic, isLoading } = useComics();
+    const [pdf, setPdf] = useState<File | null>(null);
+    const [image, setImage] = useState<File | null>(null);
+    const [categories, setCategories] = useState<string[]>([]);
+  
+    const { register, handleSubmit, formState: { errors } } = useForm<CreateComicSchema>({
+      resolver: zodResolver(createComicSchema),
+    });
+  
+    const onSubmit = (data: CreateComicSchema) => {
+      if(!pdf){
+        toast.error("Comic file is required");
+        return;
+      }
+      if(categories.length === 0){
+        toast.error("At least one genre is required");
+        return;
+      }
+      
+      createNewComic(data, pdf, image, categories);
+    };
+  return (
+    <MainLayout>
+        <MiniLayout title="Add Comic" subtitle="Add a new comic to the platform">
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="border border-line bg-background px-6 pt-4 pb-6 shadow-xl mt-4 rounded-lg">
+              <p className="text-lg text-primary-2 font-semibold flex items-center gap-2">
+                <Sparkle size={20} className="text-primary-2" /> Comic Format/
+                Type
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <SelectWithoutIcon
+                  label="Comic Format"
+                  options={[
+                    { label: "PDF Format (.pdf)", value: "pdf" },
+                    {
+                      label: "Image Format (.png, .jpg, .jpeg)",
+                      value: "image",
+                    },
+                  ]}
+                  {...register("format")}
+                  error={errors.format?.message}
+                />
+                <SelectWithoutIcon
+                  label="Comic Type"
+                  options={[
+                    { label: "Free", value: "free" },
+                    { label: "Paid", value: "paid" },
+                  ]}
+                  {...register("type")}
+                  error={errors.type?.message}
+                />
+              </div>
+            </div>
+            <div className="border border-line bg-background px-6 pt-4 pb-6 shadow-xl mt-4 rounded-lg">
+              <p className="text-lg text-primary-2 font-semibold flex items-center gap-2">
+                <CloudUpload size={20} className="text-primary-2" /> File Upload
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <PdfUploader pdf={pdf} setPdf={setPdf} />
+                <ImageUploader
+                  label="Cover Image (Optional)"
+                  image={image}
+                  setImage={setImage}
+                />
+              </div>
+            </div>
+
+            <div className="border border-line bg-background px-6 pt-4 pb-6 shadow-xl mt-4 rounded-lg">
+              <p className="text-lg text-primary-2 font-semibold flex items-center gap-2">
+                <Star size={20} className="text-primary-2" /> Comic Details
+              </p>
+              <div className="grid grid-cols-1 gap-4 mt-4">
+                <InputWithoutIcon
+                  label="Comic Title"
+                  type="text"
+                  placeholder="e.g. The Amazing Spider-Man"
+                  {...register("title")}
+                  error={errors.title?.message}
+                />
+                <MultiSelect
+                  label="Genres"
+                  options={comicCategories}
+                  selected={categories}
+                  onChange={setCategories}
+                />
+                <div className="space-y-1">
+                  <label
+                    htmlFor="description"
+                    className="text-sm text-muted font-medium"
+                  >
+                    Synopsis
+                  </label>
+                  <textarea
+                    id="description"
+                    rows={5}
+                    placeholder="e.g. A young boy discovers he has spider-like abilities and becomes the superhero Spider-Man."
+                    className="p-4 w-full rounded-lg text-sm border border-line focus:border-primary focus:ring-[3px] focus:ring-primary/20 dark:bg-secondary mt-1"
+                    {...register("synopsis")}
+                  ></textarea>
+                  {errors.synopsis && (
+                    <p className="text-red-500 text-sm">{errors.synopsis.message}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <ButtonWithLoader
+              type="submit"
+              initialText="Upload Comic"
+              loadingText="Uploading..."
+              loading={isLoading}
+              className="w-full mt-4 btn-primary h-11 rounded-lg"
+            />
+          </form>
+        </MiniLayout>
+    </MainLayout>
+  )
+}

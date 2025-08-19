@@ -145,3 +145,17 @@ interface IProduct {
   createdAt: Date;
   updatedAt: Date;
 }
+
+
+interface IBankAccount {
+  id: ObjectId;
+  user: IUser;
+  accountName: string;
+  accountNumber: string;
+  bankName: string;
+  bankCode: string;
+  isDefault: boolean;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}

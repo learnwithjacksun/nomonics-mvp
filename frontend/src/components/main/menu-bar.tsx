@@ -1,4 +1,4 @@
-import { adminNavLinks, creatorNavLinks, navLinks } from "@/constants/data";
+import { creatorNavLinks, navLinks } from "@/constants/data";
 import { X } from "lucide-react";
 import { useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
@@ -25,7 +25,6 @@ export default function MenuBar({ isOpen, onClose }: MenuBarProps) {
   }, [isOpen]);
 
   const menuNavLinks = user?.role === "creator" ? creatorNavLinks : navLinks;
-  const isAdminNavLinks = user?.isAdmin ? adminNavLinks : menuNavLinks;
 
   return (
     <div className="fixed inset-0 z-60">
@@ -50,7 +49,7 @@ export default function MenuBar({ isOpen, onClose }: MenuBarProps) {
         </div>
 
         <ul className="space-y-4 pl-4">
-          {isAdminNavLinks.map((link) => (
+          {menuNavLinks.map((link) => (
             <li key={link.label}>
               <NavLink
                 to={link.href}

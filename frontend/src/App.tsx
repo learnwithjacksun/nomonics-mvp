@@ -15,7 +15,7 @@ import {
   SellProducts,
 } from "@/pages/main";
 import { Login, Register, Role, Verify } from "./pages/auth";
-import { Comics, Create, NewChapter, Stats } from "./pages/creator";
+import { Comics, Create, NewChapter, Revenue, Stats } from "./pages/creator";
 import { Overview, Comics as AdminComics } from "./pages/admin";
 import ComicDetails from "./pages/admin/comic-details";
 import { useAuth } from "./hooks";
@@ -54,6 +54,7 @@ export default function App() {
           <Route path="stats" element={<Stats />} />
           <Route path="comics" element={<Comics />} />
           <Route path="new-chapter" element={<NewChapter />} />
+          <Route path="revenue" element={<Revenue />} />
         </Route>
         <Route path="/admin">
           <Route path="overview" element={<Overview />} />

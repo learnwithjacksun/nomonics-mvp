@@ -1,6 +1,6 @@
 import { Background, Box, ButtonWithLoader, CommentCard } from "@/components/ui";
 import PDFViewer from "@/components/ui/pdf-viewer";
-import { useComics } from "@/hooks";
+import { useComics, useComments } from "@/hooks";
 import {
   ArrowLeft,
   ChevronLeft,
@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { useState, useEffect } from "react";
 
 export default function Preview() {
   const navigate = useNavigate();
@@ -16,8 +18,49 @@ export default function Preview() {
   const comicId = searchParams.get("comicId");
   const chapterNumber = searchParams.get("chapterNumber");
   const {comics} = useComics();
+  const { addComment, getChapterComments, isLoading: commentLoading } = useComments();
+  const [comments, setComments] = useState<IComment[]>([]);
+  const [isLoadingComments, setIsLoadingComments] = useState(false);
+  
   const comic = comics?.find((comic) => comic.id === comicId);
   const chapter = comic?.chapters.find((chapter) => chapter.chapterNumber === Number(chapterNumber));
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<{ comment: string }>();
+
+  // Load comments when chapter changes
+  useEffect(() => {
+    if (chapter?.id) {
+      loadComments();
+    }
+  }, [chapter?.id]);
+
+  const loadComments = async () => {
+    if (!chapter?.id) return;
+    setIsLoadingComments(true);
+    try {
+      const chapterComments = await getChapterComments(chapter.id);
+      setComments(chapterComments);
+    } catch (error) {
+      console.error("Error loading comments:", error);
+    } finally {
+      setIsLoadingComments(false);
+    }
+  };
+
+  const onSubmit = async (data: { comment: string }) => {
+    if (!chapter?.id) return;
+    
+    const success = await addComment(chapter.id, data.comment);
+    if (success) {
+      reset();
+      loadComments(); // Reload comments after adding
+    }
+  };
   const goToNextChapter = () => {
     if (Number(chapterNumber) < (comic?.chapters.length || 0)) {
       navigate(
@@ -82,26 +125,37 @@ export default function Preview() {
 
           <div id="comments" className="w-[90%] md:w-[900px] mx-auto">
             <Box icon={<MessageSquareText size={20} />} title="Comments">
-              { chapter?.comments && chapter?.comments.length > 0 && <div className="max-h-100 h-100 mb-4 overflow-y-scroll space-y-4">
-                {chapter?.comments.map((comment) => (
-                  <CommentCard key={comment.id} comment={comment} />
-                ))}
-              </div>}
-              {chapter?.comments.length === 0 && <div className="min-h-40 bg-secondary rounded-lg p-4 center mb-4">
-                <p className="text-sm text-muted">
-                  No comments yet. Be the first to comment!
-                </p>
-              </div>}
+              {isLoadingComments ? (
+                <div className="min-h-40 bg-secondary rounded-lg p-4 center mb-4">
+                  <p className="text-sm text-muted">Loading comments...</p>
+                </div>
+              ) : comments && comments.length > 0 ? (
+                <div className="max-h-96 mb-4 overflow-y-scroll space-y-4">
+                  {comments.map((comment) => (
+                    <CommentCard key={comment.id} comment={comment} />
+                  ))}
+                </div>
+              ) : (
+                <div className="min-h-40 bg-secondary rounded-lg p-4 center mb-4">
+                  <p className="text-sm text-muted">
+                    No comments yet. Be the first to comment!
+                  </p>
+                </div>
+              )}
 
-              <form className="space-y-4">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <textarea
-                  name="description"
-                  id="description"
+                  {...register("comment", { required: "Comment is required" })}
                   rows={5}
                   placeholder="Add a comment..."
                   className="p-4 w-full rounded-lg text-sm border border-line focus:border-primary focus:ring-[3px] focus:ring-primary/20 dark:bg-secondary mt-1"
-                ></textarea>
+                />
+                {errors.comment && (
+                  <p className="text-red-500 text-sm">{errors.comment.message}</p>
+                )}
                 <ButtonWithLoader
+                  type="submit"
+                  loading={commentLoading}
                   initialText="Add Comment"
                   loadingText="Adding..."
                   className="w-full btn-primary h-10 rounded-lg"

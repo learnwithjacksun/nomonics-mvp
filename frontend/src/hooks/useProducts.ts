@@ -32,6 +32,7 @@ export default function useProducts() {
         description: data.description,
         image: imageUrl,
         category: data.category,
+        vendorType: "local",
       };
       const response = await api.post("/marketplace/create", payload);
       if (response.data.success) {

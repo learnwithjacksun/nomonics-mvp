@@ -8,6 +8,10 @@ import ChapterModel from "../models/chapter.model.js";
 import getRandom2DigitNumber from "../utils/generateRandom2DigitNumber.js";
 import { onError } from "../utils/onError.js";
 import UserModel from "../models/user.model.js";
+import {
+  getCurrentSettings,
+  calculateCreatorEarnings,
+} from "../utils/creditCalculations.js";
 
 export const createNewComic = async (req, res) => {
   try {
@@ -48,6 +52,9 @@ export const createNewComic = async (req, res) => {
       });
     }
 
+    // Get default settings for credit assignment
+    const settings = await getCurrentSettings();
+
     const comic = await ComicModel.create({
       creator,
       title,
@@ -55,7 +62,7 @@ export const createNewComic = async (req, res) => {
       genre,
       coverImage: coverImageData,
       type,
-      credit: type === "paid" ? 3 : 0,
+      credit: type === "paid" ? settings.creditsPerPaidComic : 0,
       format,
       likes: [creator],
     });
@@ -140,7 +147,6 @@ export const getNewReleaseComics = async (req, res) => {
   try {
     const comics = await ComicModel.find({
       status: "approved",
-
     })
       .sort({ createdAt: -1 })
       .limit(10)
@@ -173,31 +179,28 @@ export const getFreeComics = async (req, res) => {
 };
 
 export const getTrendingComics = async (req, res) => {
-    try {
-      
-      const comics = await ComicModel.find({ status: "approved" })
-        .populate("creator")
-        .populate("subscribers")
-  
-      const comicsWithLikes = comics.map(comic => ({
-        ...comic.toJSON(),
-        likesCount: comic.likes ? comic.likes.length : 0,
-      }));
-  
-      comicsWithLikes.sort((a, b) => b.likesCount - a.likesCount);
-  
-      const topComics = comicsWithLikes.slice(0, 10);
-  
-      res.status(200).json({
-        success: true,
-        data: topComics,
-      });
-  
-    } catch (error) {
-      onError(res, error);
-    }
-  };
-  
+  try {
+    const comics = await ComicModel.find({ status: "approved" })
+      .populate("creator")
+      .populate("subscribers");
+
+    const comicsWithLikes = comics.map((comic) => ({
+      ...comic.toJSON(),
+      likesCount: comic.likes ? comic.likes.length : 0,
+    }));
+
+    comicsWithLikes.sort((a, b) => b.likesCount - a.likesCount);
+
+    const topComics = comicsWithLikes.slice(0, 10);
+
+    res.status(200).json({
+      success: true,
+      data: topComics,
+    });
+  } catch (error) {
+    onError(res, error);
+  }
+};
 
 export const addNewChapter = async (req, res) => {
   try {
@@ -293,78 +296,90 @@ export const likeComic = async (req, res) => {
 };
 
 export const unlockComic = async (req, res) => {
-    try {
-        const {id: comicId} = req.params;
-        const userId = req.user.id;
+  try {
+    const { id: comicId } = req.params;
+    const userId = req.user.id;
 
-        const comic = await ComicModel.findById(comicId);
-        if (!comic) {
-            return res.status(404).json({
-                success: false,
-                message: "Comic not found",
-            });
-        }
+    const comic = await ComicModel.findById(comicId);
+    if (!comic) {
+      return res.status(404).json({
+        success: false,
+        message: "Comic not found",
+      });
+    }
 
-        // Check if comic is free
-        if (comic.type === "free" || comic.credit === 0) {
-            return res.status(400).json({
-                success: false,
-                message: "This comic is free and doesn't need to be unlocked",
-            });
-        }
+    // Check if comic is free
+    if (comic.type === "free" || comic.credit === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "This comic is free and doesn't need to be unlocked",
+      });
+    }
 
-        // Check if user is already a subscriber
-        if (comic.subscribers.includes(userId)) {
-            return res.status(400).json({
-                success: false,
-                message: "You have already unlocked this comic",
-            });
-        }
+    // Check if user is already a subscriber
+    if (comic.subscribers.includes(userId)) {
+      return res.status(400).json({
+        success: false,
+        message: "You have already unlocked this comic",
+      });
+    }
 
-       
-        const user = await UserModel.findById(userId);
-        
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found",
-            });
-        }
+    const user = await UserModel.findById(userId);
 
-        // Check if user has enough credits
-        if (user.credits < comic.credit) {
-            return res.status(400).json({
-                success: false,
-                message: "Insufficient credits to unlock this comic",
-            });
-        }
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
 
-        // Deduct credits from user
-        const updatedUser = await UserModel.findByIdAndUpdate(
-            userId,
-            { $inc: { credits: -comic.credit } },
-            { new: true }
-        );
+    // Check if user has enough credits
+    if (user.credits < comic.credit) {
+      return res.status(400).json({
+        success: false,
+        message: "Insufficient credits to unlock this comic",
+      });
+    }
 
-        // Add user to comic subscribers
-        const updatedComic = await ComicModel.findByIdAndUpdate(
-            comicId,
-            { $push: { subscribers: userId } },
-            { new: true }
-        ).populate("subscribers");
+    // Deduct credits from user
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      { $inc: { credits: -comic.credit } },
+      { new: true }
+    );
 
-        res.status(200).json({
-            success: true,
-            message: "Comic unlocked successfully",
-            data: {
-                comic: updatedComic,
-                user: {
-                    id: updatedUser.id,
-                    credits: updatedUser.credits,
-                },
-            },
-        });
-    } catch (error) {
-        onError(res, error);
-    }   
-}
+    const creator = await UserModel.findById(comic.creator);
+    if (!creator) {
+      return res.status(404).json({
+        success: false,
+        message: "Creator not found",
+      });
+    }
+
+    const settings = await getCurrentSettings();
+
+    creator.earnings += await calculateCreatorEarnings(comic.credit, settings);
+    await creator.save();
+
+    // Add user to comic subscribers
+    const updatedComic = await ComicModel.findByIdAndUpdate(
+      comicId,
+      { $push: { subscribers: userId } },
+      { new: true }
+    ).populate("subscribers");
+
+    res.status(200).json({
+      success: true,
+      message: "Comic unlocked successfully",
+      data: {
+        comic: updatedComic,
+        user: {
+          id: updatedUser.id,
+          credits: updatedUser.credits,
+        },
+      },
+    });
+  } catch (error) {
+    onError(res, error);
+  }
+};

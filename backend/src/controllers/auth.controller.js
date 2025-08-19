@@ -44,7 +44,7 @@ export const register = async (req, res) => {
     }
 
     const token = jwt.sign({ id: newUser.id }, envFile.JWT_SECRET, {
-      expiresIn: "1d",
+      expiresIn: "30 days",
     });
     
     res.status(201).json({
@@ -88,6 +88,8 @@ export const verifyOtp = async (req, res) => {
         });
       }
       user.isEmailVerified = true;
+      user.otp = null;
+      user.otpExpiresAt = null;
       user.save();
   
       res.status(200).json({
@@ -125,7 +127,7 @@ export const verifyOtp = async (req, res) => {
         });
       }
       const token = jwt.sign({ id: user.id }, envFile.JWT_SECRET, {
-        expiresIn: "1d",
+        expiresIn: "30 days",
       });
       res.status(200).json({
         success: true,
@@ -194,3 +196,26 @@ export const resendOtp = async (req, res) => {
     onError(res, error);
   }
 };
+
+export const adminLogin = async (req, res) => {
+  const {email, password} = req.body;
+  try {
+    const admin = await UserModel.findOne({email, isAdmin: true});
+    if(!admin) {
+      return res.status(404).json({success: false, message: "Admin not found"});
+    }
+    const isPasswordCorrect = bcrypt.compareSync(password, admin.password);
+    if(!isPasswordCorrect) {
+      return res.status(400).json({success: false, message: "Invalid password"});
+    }
+    const token = jwt.sign({id: admin.id}, envFile.JWT_SECRET, {expiresIn: "1d"});
+    res.status(200).json({
+      success: true,
+      message: "Admin logged in successfully",
+      data: admin,
+      token
+    });
+  } catch (error) {
+    onError(res, error);
+  }
+}
