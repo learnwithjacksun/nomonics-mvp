@@ -92,13 +92,13 @@ export default function Users() {
                     filteredUsers.map((user) => (
                         <Box key={user.id}>
                             <Link to={`/users/${user.id}`} className="flex items-center gap-4">
-                                <div className="h-20 min-w-20 bg-blue-300 rounded-full overflow-hidden">
+                                <div className="md:min-h-20 min-h-14 md:min-w-20 min-w-14 bg-blue-300 rounded-full overflow-hidden">
                                     <img src={user.image} alt="" className="h-full w-full object-cover" />
                                 </div>
                                 <div>
                                     <h3 className="text-lg font-medium">{user.name}</h3>
                                     <p className="text-sm text-muted">{user.email}</p>
-                                    <p className="text-sm text-muted capitalize bg-primary/10 px-2 py-1 rounded-full w-fit text-primary-2 mt-4">{user.role}</p>
+                                    <p className="text-sm capitalize bg-primary/10 px-2 py-1 rounded-full w-fit text-primary-2 mt-4">{user.role}</p>
                                 </div>
                             </Link>
                         </Box>
