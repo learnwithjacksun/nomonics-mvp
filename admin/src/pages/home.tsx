@@ -20,7 +20,13 @@ export default function Home() {
 
   return (
     <>
-      <div className="auth min-h-[100dvh] w-full center flex-col gap-4">
+      <div
+      style={{
+        backgroundImage: "url('/auth.svg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+      className="auth min-h-[100dvh] w-full center flex-col gap-4 bg-blend-darken">
         <div>
           <img src="/logo.svg" alt="Nomonics Logo" height={200} width={200} />
         </div>

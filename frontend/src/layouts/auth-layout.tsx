@@ -13,7 +13,13 @@ export default function AuthLayout({
   subtitle,
 }: AuthLayoutProps) {
   return (
-    <div className="auth h-[100dvh]  overflow-y-scroll ">
+    <div className="auth h-[100dvh] overflow-y-scroll bg-blend-darken"
+    style={{
+      backgroundImage: "url('/auth.svg')",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+    }}
+    >
       <div className="main grid md:grid-cols-2 h-[100dvh] gap-10 py-10 md:py-0">
         <div className="center">
           <Link to="/"><img src="/logo.svg" alt="logo" width={200} height={200} /></Link>
