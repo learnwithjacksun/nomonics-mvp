@@ -38,7 +38,7 @@ export default function ForgotPassword() {
       subtitle="Enter your email to reset your password"
     >
       {showInfo && (
-        <div className="bg-green-500/10 border border-green-600 text-center p-4 rounded-md mb-4 text-green-600 font-medium">
+        <div className="bg-green-500/10 border border-green-600 p-4 rounded-md mb-4 text-green-600 font-medium">
           <p className="text-sm">A password reset link has been sent to your email</p>
         </div>
       )}
