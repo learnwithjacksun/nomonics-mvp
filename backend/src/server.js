@@ -23,8 +23,9 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://nomonics-mvp.vercel.app",
   "https://admin-nomonics-mvp.vercel.app",
-  "https://nomonics.com",
-  "https://www.nomonics.com",
+  "https://nomomics.com",
+  "https://www.nomomics.com",
+  "https://admin.nomomics.com",
 ];
 
 app.use(
