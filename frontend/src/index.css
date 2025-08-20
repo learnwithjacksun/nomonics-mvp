@@ -94,6 +94,10 @@ button,
   @apply hidden;
 }
 
+.p{
+  color: #1f2937;
+}
+
 .goog-te-combo {
   background: var(--secondary);
   padding: .5em;
