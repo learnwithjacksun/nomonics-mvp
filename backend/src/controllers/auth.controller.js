@@ -2,13 +2,14 @@ import envFile from "../config/env.js";
 import UserModel from "../models/user.model.js";
 import generateRandomNumber from "../utils/generateRandomNumbers.js";
 import { onError } from "../utils/onError.js";
-import { sendEmail, sendOTPEmail } from "../utils/sendEmail.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { generateResetPasswordTemplate } from "../templates/resetPassword.js";
+import sendEmail from "../config/email.js";
+import { generateOTPEmailTemplate } from "../templates/otpEmail.js";
 
 export const register = async (req, res) => {
-  const { name, email, role, password, sendEmail } = req.body;
+  const { name, email, role, password, sendEmail: isSendEmail } = req.body;
 
   try {
     const existingUser = await UserModel.findOne({ email });
@@ -26,7 +27,7 @@ export const register = async (req, res) => {
       password: hashedPassword,
       role,
       preferences: {
-        sendEmail,
+        sendEmail: isSendEmail,
       },
     });
     const otp = generateRandomNumber(5);
@@ -36,13 +37,18 @@ export const register = async (req, res) => {
     await newUser.save();
 
     // Send OTP email if user opted in
-    if (sendEmail) {
-      const emailSent = await sendOTPEmail(email, otp, name);
+   
+      const emailSent = await sendEmail(
+        "Nomomics - Email Verification",
+        generateOTPEmailTemplate(otp, name),
+        email,
+        name
+      );
       if (!emailSent) {
         console.warn(`Failed to send OTP email to ${email}`);
         // Don't fail registration if email fails, just log it
       }
-    }
+    
 
     const token = jwt.sign({ id: newUser.id }, envFile.JWT_SECRET, {
       expiresIn: "30 days",
@@ -182,7 +188,12 @@ export const resendOtp = async (req, res) => {
     await user.save();
 
     // Send new OTP email
-    const emailSent = await sendOTPEmail(email, otp, user.name);
+    const emailSent = await sendEmail(
+      "Nomomics - Email Verification",
+      generateOTPEmailTemplate(otp, user.name),
+      email,
+      user.name
+    );
     if (!emailSent) {
       return res.status(500).json({
         success: false,
@@ -243,20 +254,16 @@ export const forgotPassword = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
     const frontendUrl = envFile.FRONTEND_URL;
-    const emailSent = await sendEmail(
-      email,
+    await sendEmail(
       "Reset Password - Nomonics",
       generateResetPasswordTemplate(
         user.name,
         `${frontendUrl}/reset-password?token=${user.id}`
-      )
+      ),
+      email,
+      user.name
     );
-    if (!emailSent) {
-      return res.status(500).json({
-        success: false,
-        message: "Failed to send OTP email. Please try again.",
-      });
-    }
+  
     res.status(200).json({
       success: true,
       message: "OTP sent successfully. Please check your email.",
