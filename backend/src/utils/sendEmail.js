@@ -1,6 +1,7 @@
 import transporter from "../config/nodemailer.js";
 import { generateOTPEmailTemplate } from "../templates/otpEmail.js";
-
+import { generateResetPasswordTemplate } from "../templates/resetPassword.js";
+import process from "process";
 /**
  * Send OTP verification email
  * @param {string} to - Recipient email address
@@ -26,6 +27,25 @@ export const sendOTPEmail = async (to, otp, userName = "") => {
   }
 };
 
+export const sendResetPasswordEmail = async (to, name, url) => {
+  try {
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: to,
+      subject: "Reset Password - Nomonics",
+      html: generateResetPasswordTemplate(name, url),
+    };
+
+      const info = await transporter.sendMail(mailOptions);
+      console.log("Email sent successfully:", info.messageId);
+      return true;
+    } catch (error) {
+      console.error("Error sending email:", error);
+      return false;
+    }
+  }
+
+
 /**
  * Generic email sending function
  * @param {string} to - Recipient email address
@@ -33,6 +53,8 @@ export const sendOTPEmail = async (to, otp, userName = "") => {
  * @param {string} html - Email HTML content
  * @returns {Promise<boolean>} - Success status
  */
+
+
 export const sendEmail = async (to, subject, html) => {
   try {
     const mailOptions = {

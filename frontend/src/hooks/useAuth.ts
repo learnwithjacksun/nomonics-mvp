@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import api from "@/config/api";
-import type { LoginSchema, RegisterSchema } from "@/schemas/auth";
+import type { LoginSchema, RegisterSchema, ForgotPasswordSchema, ResetPasswordSchema } from "@/schemas/auth";
 
 const useAuth = () => {
   const { user, token, setUser, setToken, setLoginInfo, loginInfo } =
@@ -144,6 +144,46 @@ const useAuth = () => {
     }
   }, [setUser, setToken]);
 
+  const resetPassword = async (data: ResetPasswordSchema, userId: string) => {
+    setIsLoading(true);
+    try {
+      const response = await api.post("/auth/reset-password", {
+        password: data.newPassword,
+        userId,
+      });
+      if (response.data.success) {
+        toast.success(response.data.message);
+        navigate("/login");
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      onError(error as Error | AxiosError);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const forgotPassword = async (data: ForgotPasswordSchema) => {
+    setIsLoading(true);
+    try {
+      const response = await api.post("/auth/forgot-password", {
+        email: data.email,
+      });
+      if (response.data.success) {
+        toast.success(response.data.message);
+        return response.data.success;
+      } else {
+        toast.error(response.data.message);
+        return response.data.success;
+      }
+    } catch (error) {
+      onError(error as Error | AxiosError);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     user,
     token,
@@ -154,6 +194,8 @@ const useAuth = () => {
     registerUser,
     verifyOtp,
     resentOtp,
+    forgotPassword,
+    resetPassword,
     isResendLoading,
     isCheckAuth,
     setLoginInfo,

@@ -1,4 +1,4 @@
-import { ComicCard } from "@/components/main";
+import { ComicCardTwo } from "@/components/main";
 import { Search } from "@/components/ui";
 import { genres } from "@/constants/data";
 import { useComics } from "@/hooks";
@@ -60,9 +60,9 @@ export default function Categories() {
           Comics...
         </div>
       ) : (
-        <div className="main grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="main grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {filteredComics?.map((comic) => (
-            <ComicCard key={comic.id} comic={comic} />
+            <ComicCardTwo key={comic.id} comic={comic} />
           ))}
         </div>
       )}

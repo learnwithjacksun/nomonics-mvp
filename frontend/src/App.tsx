@@ -14,7 +14,7 @@ import {
   Transactions,
   SellProducts,
 } from "@/pages/main";
-import { Login, Register, Role, Verify } from "./pages/auth";
+import { ForgotPassword, Login, NewPassword, Register, Role, Verify } from "./pages/auth";
 import { Comics, Create, NewChapter, Revenue, Stats } from "./pages/creator";
 import { Overview, Comics as AdminComics } from "./pages/admin";
 import ComicDetails from "./pages/admin/comic-details";
@@ -36,6 +36,8 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<NewPassword />} />
         <Route path="/role" element={<Role />} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/comic/:id" element={<Comic />} />

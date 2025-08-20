@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-export default function ComicCard({comic}: {comic: IComic}) {
+export default function ComicCardTwo({comic}: {comic: IComic}) {
   const navigate = useNavigate();
 
   const handleNavigate = (id: string) => {
@@ -9,7 +9,7 @@ export default function ComicCard({comic}: {comic: IComic}) {
 
   return (
     <div
-      className="relative rounded-sm overflow-hidden cursor-pointer min-w-[120px] md:min-w-[150px] md:w-[150px] w-[120px]"
+      className="relative rounded-sm overflow-hidden cursor-pointer"
       style={{ aspectRatio: "1/1.414" }}
       onClick={() => handleNavigate(comic.id)}
     >
@@ -25,8 +25,8 @@ export default function ComicCard({comic}: {comic: IComic}) {
 
       {/* Text Content */}
       <div className="absolute bottom-0 left-0 p-2 text-white">
-        <h3 className="text-md font-bold line-clamp-1">{comic?.title || "Unknown"}</h3>
-        <p className="text-xs opacity-80">by {typeof comic.creator === "string" ? "Unknown" : comic.creator.name}</p>
+        <h3 className="md:text-md text-sm font-bold line-clamp-1">{comic?.title || "Unknown"}</h3>
+        <p className="text-xs line-clamp-1 opacity-80">by {typeof comic.creator === "string" ? "Unknown" : comic.creator.name}</p>
       </div>
     </div>
   );

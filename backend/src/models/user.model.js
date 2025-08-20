@@ -67,6 +67,7 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
+  
     otp: { type: String, default: null },
     otpExpiresAt: { type: Date, default: null },
     preferences: {

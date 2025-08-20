@@ -6,6 +6,7 @@ export { default as Feature } from "./feature";
 export { default as Episodes } from "./episodes";
 export { default as MenuBar } from "./menu-bar";
 export { default as ComicCard } from "./comic-card";
+export { default as ComicCardTwo } from "./comic-card-two";
 export { default as SavedComics } from "./saved-comics";
 export { default as ReadComics } from "./read-comics";
 export { default as Withdrawal } from "./withdrawal";

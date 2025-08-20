@@ -37,18 +37,29 @@ const forgotPasswordSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }).trim().toLowerCase(),
 });
 
+const resetPasswordSchema = z.object({
+  newPassword: z.string().min(8, { message: "Password must be at least 8 characters long" }).trim(),
+  confirmPassword: z.string().min(8, { message: "Password must be at least 8 characters long" }).trim(),
+}).refine((data) => data.newPassword === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
 type RegisterSchema = z.infer<typeof registerSchema>;
 type LoginSchema = z.infer<typeof loginSchema>;
 type VerifyOtpSchema = z.infer<typeof verifyOtpSchema>;
 type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
+type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
 
 export {
   registerSchema,
   loginSchema,
   verifyOtpSchema,
   forgotPasswordSchema,
+  resetPasswordSchema,
   type RegisterSchema,
   type LoginSchema,
   type VerifyOtpSchema,
   type ForgotPasswordSchema,
+  type ResetPasswordSchema,
 };

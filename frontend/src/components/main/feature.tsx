@@ -18,7 +18,7 @@ export default function Feature({ title, comics, isLoading }: FeatureProps) {
           ))}
         </div>
       ) : (
-        <div className="grid lg:grid-cols-5 md:grid-cols-3 grid-cols-2 gap-4">
+        <div className="flex flex-nowrap gap-4 overflow-x-scroll md:h-60 h-50 hide-scrollbar">
           {comics?.map((comic) => (
             <ComicCard key={comic.id} comic={comic} />
           ))}
