@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="bg-primary-2 py-4 text-white">
       <div className="main grid xl:grid-cols-6 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
         <div className="space-y-2">
-          <img src="/logo.svg" alt="logo" width={150} height={150} className="-translate-x-4 -translate-y-2" />
+          <img src="/logo.svg" alt="logo" width={150} height={150} className="-translate-x-6 -translate-y-2" />
           <div className="space-y-6">
             <div className="flex items-center gap-2">
               <div className="flex-shrink-0">
