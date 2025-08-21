@@ -21,10 +21,10 @@ const Footer = () => {
           <a href="https://www.facebook.com/nomomics/" target="_blank" rel="noopener noreferrer">
             <img src="/fb.svg" alt="facebook" />
           </a>
-          <a href="https://www.instagram.com/nomomics/" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.instagram.com/nomomics_?igsh=MWYwMDh3ZmpoYWd5NQ==" target="_blank" rel="noopener noreferrer">
             <img src="/insta.svg" alt="instagram" />
           </a>
-          <a href="https://www.twitter.com/nomomics/" target="_blank" rel="noopener noreferrer">
+          <a href="https://x.com/nomomics?s=21" target="_blank" rel="noopener noreferrer">
             <img src="/x.svg" alt="twitter" />
           </a>
         </div>
